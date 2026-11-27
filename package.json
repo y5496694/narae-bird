@@ -1,0 +1,8 @@
+{
+  "name": "aiedue-domain-bird",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {"start": "node server.mjs", "test": "node --test test/*.test.mjs"},
+  "dependencies": {"ws": "^8.18.3"}
+}
