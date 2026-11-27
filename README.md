@@ -1,8 +1,8 @@
-# 나래 버드 · 도메인
+# 나래 버드
 
-[![검증](https://github.com/y5496694/narae-bird-domain/actions/workflows/verify.yml/badge.svg)](https://github.com/y5496694/narae-bird-domain/actions/workflows/verify.yml)
+[![검증](https://github.com/y5496694/narae-bird/actions/workflows/verify.yml/badge.svg)](https://github.com/y5496694/narae-bird/actions/workflows/verify.yml)
 
-브라우저·PC·Termux 사이의 **실시간 파일 전송**과 **경로 기반 사이트 관리·로컬 HTTP/API 연결**을 제공하는 독립 서버입니다.
+**도메인 관리와 파일 전송을 함께 관리하는 프로젝트**입니다. 브라우저·PC·Termux 사이의 **실시간 파일 전송**과 **경로 기반 사이트 관리·로컬 HTTP/API 연결**을 하나의 독립 서버에서 제공합니다.
 
 - **나래 버드**: 같은 관리자 계정의 기기 간 파일 스트리밍. 파일 본문은 서버 디스크에 보관하지 않습니다.
 - **도메인**: `https://example.com/my-site` 형태의 경로 주소를 생성·수정·공개·삭제합니다. DNS 하위 도메인을 만드는 기능은 아닙니다.
@@ -22,8 +22,8 @@
 ## 로컬에서 시작
 
 ```sh
-git clone https://github.com/y5496694/narae-bird-domain.git
-cd narae-bird-domain
+git clone https://github.com/y5496694/narae-bird.git
+cd narae-bird
 npm ci --ignore-scripts
 python -m pip install -r requirements.txt
 

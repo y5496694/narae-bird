@@ -1,4 +1,4 @@
-name: Verify Narae Bird and Domain
+name: Verify Narae Bird
 on:
   push:
     branches: [main]
