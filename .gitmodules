@@ -1,0 +1,3 @@
+[submodule "remote/naraeon"]
+	path = remote/naraeon
+	url = https://github.com/y5496694/remote-naraeon-cli.git

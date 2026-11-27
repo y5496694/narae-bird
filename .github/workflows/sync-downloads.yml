@@ -1,0 +1,41 @@
+name: Sync latest NaraeOn downloads
+on:
+  schedule:
+    - cron: '17 * * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: narae-bird-download-docs
+  cancel-in-progress: false
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Test catalog validation and withdrawal handling
+        run: python -m unittest discover -s test -p 'test_downloads.py' -v
+      - name: Read the existing public APK store
+        run: python ops/sync-downloads.py
+      - name: Commit only the download document when changed
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add -- docs/downloads.md
+          if git diff --cached --quiet; then
+            echo 'Download document already matches store'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'docs: sync latest NaraeOn store download'
+          # No force push/rebase: concurrent main updates fail safely; the next run reconciles.
+          git push origin HEAD:main

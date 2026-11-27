@@ -2,14 +2,24 @@
 
 [![검증](https://github.com/y5496694/narae-bird/actions/workflows/verify.yml/badge.svg)](https://github.com/y5496694/narae-bird/actions/workflows/verify.yml)
 
-**도메인 관리와 파일 전송을 함께 관리하는 프로젝트**입니다. 브라우저·PC·Termux 사이의 **실시간 파일 전송**과 **경로 기반 사이트 관리·로컬 HTTP/API 연결**을 하나의 독립 서버에서 제공합니다.
+**지정된 휴대폰·태블릿에 나래온 APK를 설치하고, 해당 기기를 서버 구동 기기로 활용하는 작업에 특화된 저장소**입니다. **나래 버드와 도메인을 사용해 PC에서 서버를 준비·배포**하고, 폰·태블릿의 Termux에서 실행한 서비스를 공개할 수 있습니다. 도메인 관리·실시간 파일 전송뿐 아니라 **최신 나래온 APK 안내와 나래온 리모트**를 함께 제공합니다.
 
+- **[나래온 최신 APK·리모트 다운로드](docs/downloads.md)** — 기존 앱스토어를 매시간 조회해 APK 링크·버전·배포 정보를 자동 반영합니다. 기기 앱의 무확인 자동 설치를 뜻하지 않습니다.
+- **[폰·태블릿 서버 운영 가이드](docs/android-server.md)** — F-Droid → Termux 설치 → PC 파일 배포 → 서버 실행 → 도메인 공개 → 리모트 연결.
+- **나래온 리모트**: 나래온이 설치된 태블릿·휴대폰의 화면을 PC에서 확인하고 원격 제어하여 조종할 수 있습니다. 공식 `remote-naraeon-cli` 소스를 `remote/naraeon` Git 하위 모듈로 포함합니다.
+- **권장 서버 실행 환경**: 폰·태블릿 서버 운영 시 **F-Droid에서 설치한 Termux의 최신 안정판**을 권장합니다. 나래온은 연결·조작, Termux는 실제 서버 실행을 담당합니다.
 - **나래 버드**: 같은 관리자 계정의 기기 간 파일 스트리밍. 파일 본문은 서버 디스크에 보관하지 않습니다.
 - **도메인**: `https://example.com/my-site` 형태의 경로 주소를 생성·수정·공개·삭제합니다. DNS 하위 도메인을 만드는 기능은 아닙니다.
 - **커넥터**: 기기가 게이트웨이로 WSS 연결을 열어 로컬 `127.0.0.1:포트`의 HTTP/API를 공개합니다.
 - **계정 분리**: 사이트·기기·파일 전송의 소유권, 관리자 세션·CSRF, 수정 충돌 검사.
 
 운영 서비스: [도메인](https://aiedue.ddns.net/domain) · [버드](https://aiedue.ddns.net/bird)
+
+## 먼저 고를 운영 방식
+
+- **기존 게이트웨이 + 폰·태블릿 서버**: 아래 게이트웨이 전체를 설치할 필요 없이 [모바일 서버 운영 가이드](docs/android-server.md)를 따릅니다. PC에서 준비 → 버드로 전송 → 기기 Termux에서 실행 → 도메인으로 공개합니다.
+- **자체 게이트웨이**: 아래 로컬 시작 안내로 이 저장소의 도메인·파일 전송 서버를 직접 설치합니다. 이후 폰·PC의 CLI에서 `--base`로 해당 게이트웨이를 지정합니다.
+- **PC에서 기기 원격 조종**: [리모트 최신 릴리스](https://github.com/y5496694/remote-naraeon-cli/releases/latest) 또는 포함된 `remote/naraeon` 소스를 사용합니다. 기기에서 나래온 원격 연결·접근성·Termux 등 허용 앱을 직접 설정해야 합니다.
 
 ## 요구 사항
 
@@ -22,8 +32,9 @@
 ## 로컬에서 시작
 
 ```sh
-git clone https://github.com/y5496694/narae-bird.git
+git clone --recurse-submodules https://github.com/y5496694/narae-bird.git
 cd narae-bird
+# 이미 받았다면: git submodule update --init --recursive
 npm ci --ignore-scripts
 python -m pip install -r requirements.txt
 
@@ -155,6 +166,8 @@ python -m unittest discover -s test -p 'test_*.py'
 포함: 계정·세션·CSRF·로그아웃, 사이트/기기/파일 소유권 격리, 예약 경로·수정 충돌·rollback, 파일 바이트·해시 일치와 서버 디스크 미저장, 빈 파일·취소, 실제 Python CLI 송수신·덮어쓰기 방지·부분 파일 정리, Python 커넥터 HTTP/API 중계·인증 헤더 격리, Caddy 무변경 재조정, 독립 설치 관리자 생성·기존 계정 보존.
 
 기존 에이두 운영 환경에서는 공개 브라우저 전송·PC↔Pi 양방향 CLI·공개 HTTPS→Pi HTTP/API를 별도 검증했습니다. **Android Termux 실기기 설치·실행은 미검증**이며 PC/Pi 성공이 이를 대신하지 않습니다.
+
+다운로드 문서 자동 갱신은 신규 배포 반영·패키지 격리·배포 철회·잘못된 URL/메타데이터 거부·조회 실패 시 기존 문서 보존·멱등 저장을 검사합니다. 포함한 공식 리모트의 Windows 검사는 `remote/naraeon`에서 `python -X utf8 -B -m unittest discover -s tests -v`로 실행하며, CI에도 별도 Windows 작업을 포함합니다. 리모트 자동검사는 실제 폰 조작 성공을 뜻하지 않습니다.
 
 ## 소스 출처
 
